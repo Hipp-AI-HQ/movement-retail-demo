@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ancient Nutrition — Amazon Channel Analysis | Movement Retail</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0A0F1E;
+    --navy-card: #111827;
+    --navy-card-2: #0D1520;
+    --navy-border: #1E293B;
+    --gold: #F59E0B;
+    --gold-dark: #D97706;
+    --gold-light: #FCD34D;
+    --blue: #3B82F6;
+    --blue-dark: #1D4ED8;
+    --red: #EF4444;
+    --red-dark: #991B1B;
+    --green: #10B981;
+    --green-dark: #065F46;
+    --white: #F8FAFC;
+    --muted: #94A3B8;
+    --dark-muted: #475569;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Progress Bar */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    z-index: 9999;
+    transition: width 0.1s ease;
+  }
+
+  /* Top Bar */
+  #top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: rgba(10, 15, 30, 0.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--navy-border);
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    z-index: 1000;
+    gap: 16px;
+  }
+
+  .mr-logo {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .logo-divider { width: 1px; height: 20px; background: var(--navy-border); flex-shrink: 0; }
+
+  .brand-tag { font-size: 13px; color: var(--muted); flex: 1; }
+
+  .print-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 6px 18px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .print-btn:hover { background: var(--gold); color: var(--navy); }
+
+  /* Side Nav */
+  #slide-nav {
+    position: fixed;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 2px solid var(--dark-muted);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .nav-dot.active { border-color: var(--gold); background: var(--gold); transform: scale(1.35); }
+  .nav-dot:hover { border-color: var(--muted); }
+  .nav-dot .nav-tip {
+    position: absolute;
+    left: 20px; top: 50%; transform: translateY(-50%);
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    color: var(--white);
+    font-size: 11px;
+    white-space: nowrap;
+    padding: 4px 10px;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-dot:hover .nav-tip { opacity: 1; }
+
+  /* Slides */
+  .slide {
+    min-height: 100vh;
+    padding: 96px 80px 72px 80px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .slide.visible { opacity: 1; transform: translateY(0); }
+  #slide-1 { opacity: 1; transform: none; }
+
+  .slide-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slide-label::after { content: ''; flex: 0 0 36px; height: 1px; background: var(--gold); opacity: 0.5; }
+
+  h1 { font-size: clamp(30px, 5vw, 54px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+  h2 { font-size: clamp(22px, 3vw, 34px); font-weight: 700; letter-spacing: -0.02em; }
+  h3 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+  h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+
+  .gold { color: var(--gold); }
+  .muted { color: var(--muted); }
+  .red { color: var(--red); }
+  .green { color: var(--green); }
+
+  /* Cards */
+  .card {
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .card-gold { border-color: var(--gold); }
+  .card-red { border-color: var(--red-dark); background: rgba(239,68,68,0.05); }
+  .card-green { border-color: var(--green-dark); background: rgba(16,185,129,0.05); }
+  .card-blue { border-color: var(--blue-dark); background: rgba(59,130,246,0.05); }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .grid-2-1 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 36px; align-items: start; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; padding: 9px 12px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--navy-border); }
+  td { padding: 9px 12px; border-bottom: 1px solid rgba(30,41,59,0.5); }
+  tr:last-child td { border-bottom: none; }
+  .td-label { color: var(--muted); font-size: 13px; }
+  .td-value { font-weight: 600; }
+
+  /* KPI Bar */
+  .kpi-bar {
+    display: flex; gap: 0;
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 44px;
+  }
+  .kpi-item { flex: 1; padding: 22px 28px; border-right: 1px solid var(--navy-border); text-align: center; }
+  .kpi-item:last-child { border-right: none; }
+  .kpi-number {
+    font-size: 40px; font-weight: 800; letter-spacing: -0.03em;
+    color: var(--gold); font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+    display: block;
+  }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-top: 4px; display: block; }
+
+  /* Score Dial */
+  .score-dial-wrapper { display: flex; flex-direction: column; align-items: center; padding: 28px 20px; }
+  .score-bg-circle { fill: none; stroke: var(--navy-border); stroke-width: 8; }
+  .score-arc {
+    fill: none; stroke: var(--gold); stroke-width: 8; stroke-linecap: round;
+    stroke-dasharray: 339.3; stroke-dashoffset: 339.3;
+    transform: rotate(-90deg); transform-origin: 60px 60px;
+    transition: stroke-dashoffset 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .score-dial-num { font-size: 30px; font-weight: 800; fill: var(--gold); font-family: 'SF Mono', monospace; text-anchor: middle; dominant-baseline: central; }
+  .score-dial-sub { font-size: 10px; fill: var(--muted); text-anchor: middle; dominant-baseline: central; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* Risk Cards */
+  .risk-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+  .risk-high { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid var(--red-dark); }
+  .risk-medium { background: rgba(245,158,11,0.12); color: var(--gold); border: 1px solid var(--gold-dark); }
+
+  /* Revenue Scenario */
+  .scenario-card { text-align: center; padding: 30px 18px; }
+  .scenario-label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .scenario-monthly { font-size: 28px; font-weight: 800; font-family: 'SF Mono', monospace; color: var(--white); }
+  .scenario-annual { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .scenario-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 10px; border-radius: 999px; background: rgba(245,158,11,0.12); color: var(--gold); border: 1px solid var(--gold-dark); margin-top: 10px; }
+
+  /* Before/After */
+  .before-after-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .ba-col { padding: 24px 28px; border-radius: 10px; }
+  .ba-before { background: rgba(239,68,68,0.05); border: 1px solid var(--red-dark); }
+  .ba-after { background: rgba(16,185,129,0.05); border: 1px solid var(--green-dark); }
+  .ba-header { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 14px; }
+  .ba-before .ba-header { color: var(--red); }
+  .ba-after .ba-header { color: var(--green); }
+  .ba-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; font-size: 14px; line-height: 1.4; }
+  .ba-icon { flex-shrink: 0; margin-top: 1px; }
+
+  /* Image Concepts Grid */
+  .concept-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 28px; }
+  .concept-card { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: 8px; padding: 14px; }
+  .concept-num { font-size: 10px; color: var(--gold); font-weight: 700; letter-spacing: 0.12em; margin-bottom: 5px; }
+  .concept-title { font-size: 13px; font-weight: 600; margin-bottom: 5px; line-height: 1.3; }
+  .concept-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* Timeline */
+  .timeline { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; position: relative; margin-top: 36px; }
+  .timeline::before { content: ''; position: absolute; top: 27px; left: calc(16.7%); right: calc(16.7%); height: 2px; background: var(--navy-border); z-index: 0; }
+  .timeline-phase { position: relative; padding: 0 14px; text-align: center; }
+  .timeline-dot { width: 54px; height: 54px; border-radius: 50%; background: var(--navy-card); border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 13px; font-weight: 800; color: var(--gold); font-family: 'SF Mono', monospace; position: relative; z-index: 1; }
+  .timeline-phase-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .timeline-bullets { list-style: none; text-align: left; display: inline-block; }
+  .timeline-bullets li { font-size: 13px; color: var(--muted); margin-bottom: 7px; padding-left: 14px; position: relative; line-height: 1.4; }
+  .timeline-bullets li::before { content: 'B8'; position: absolute; left: 0; color: var(--gold); font-size: 10px; top: 3px; }
+
+  /* Pillar Cards */
+  .pillar-icon { font-size: 26px; margin-bottom: 10px; }
+  .pillar-title { font-size: 15px; font-weight: 700; margin-bottom: 7px; }
+  .pillar-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* CTA */
+  .cta-next-steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin: 36px 0; max-width: 860px; width: 100%; }
+  .cta-card { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: 10px; padding: 26px 20px; transition: border-color 0.2s, transform 0.2s; }
+  .cta-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+  .cta-step-num { font-size: 10px; color: var(--gold); font-weight: 700; letter-spacing: 0.15em; margin-bottom: 7px; }
+  .cta-step-title { font-size: 15px; font-weight: 700; margin-bottom: 7px; }
+  .cta-step-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+  .contact-block { margin-top: 28px; padding: 22px 44px; border: 1px solid var(--navy-border); border-radius: 10px; background: var(--navy-card); }
+  .contact-name { font-size: 17px; font-weight: 700; margin-bottom: 7px; }
+  .contact-details { font-size: 13px; color: var(--muted); display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; }
+  .cta-footer { margin-top: 44px; border-top: 1px solid var(--navy-border); padding-top: 22px; text-align: center; width: 100%; max-width: 860px; }
+  .footer-logo { font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
+  .footer-tagline { font-size: 12px; color: var(--dark-muted); }
+  .confidentiality { font-size: 11px; color: var(--dark-muted); margin-top: 10px; font-style: italic; }
+
+  /* Utility */
+  .highlight-box {
+    background: rgba(245,158,11,0.07);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-left: 4px solid var(--gold);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-size: 15px;
+    font-style: italic;
+    line-height: 1.55;
+    margin-top: 22px;
+  }
+  .alert-box {
+    background: rgba(239,68,68,0.07);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-left: 4px solid var(--red);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-size: 14px;
+    margin-top: 22px;
+  }
+  .bullet-list { list-style: none; }
+  .bullet-list li { padding: 8px 0 8px 18px; position: relative; font-size: 14px; line-height: 1.5; border-bottom: 1px solid rgba(30,41,59,0.4); }
+  .bullet-list li:last-child { border-bottom: none; }
+  .bullet-list li::before { content: 'B8'; position: absolute; left: 0; color: var(--gold); font-size: 10px; top: 11px; }
+  .footnote { font-size: 11px; color: var(--dark-muted); font-style: italic; margin-top: 18px; line-height: 1.5; }
+
+  /* Cover */
+  #slide-1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse 80% 60% at 75% 25%, rgba(245,158,11,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 80% at 15% 85%, rgba(59,130,246,0.05) 0%, transparent 60%),
+      var(--navy);
+  }
+  .cover-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(30,41,59,0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30,41,59,0.25) 1px, transparent 1px);
+    background-size: 64px 64px;
+    pointer-events: none;
+  }
+  .cover-content { position: relative; z-index: 1; max-width: 820px; }
+  .cover-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; display: flex; align-items: center; gap: 12px; }
+  .cover-eyebrow::before { content: ''; display: block; width: 28px; height: 2px; background: var(--gold); }
+  .cover-subtitle { font-size: 17px; color: var(--muted); margin-top: 14px; max-width: 580px; line-height: 1.55; }
+  .cover-meta { margin-top: 28px; display: flex; gap: 28px; font-size: 13px; color: var(--dark-muted); flex-wrap: wrap; }
+  .cover-meta span { display: flex; align-items: center; gap: 6px; }
+  .cover-meta strong { color: var(--muted); }
+
+  /* Slide 9 centering */
+  #slide-9 { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+
+  /* Print */
+  @media print {
+    #top-bar, #slide-nav, #progress-bar, .print-btn { display: none !important; }
+    .slide { page-break-after: always; min-height: 100vh; opacity: 1 !important; transform: none !important; }
+    body { background: #fff; color: #0f172a; }
+    .card { border-color: #e2e8f0 !important; background: #f8fafc !important; }
+    .kpi-bar { border-color: #e2e8f0 !important; background: #f8fafc !important; }
+    .kpi-item { border-right-color: #e2e8f0 !important; }
+    .gold, .kpi-number, .scenario-monthly { color: #92400e !important; }
+    .muted, .td-label, .muted { color: #64748b !important; }
+    .dark-muted { color: #94a3b8 !important; }
+    #slide-1 { background: #f0f4ff !important; }
+    .cover-grid-bg { display: none; }
+    .timeline::before { background: #e2e8f0 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header id="top-bar">
+  <div class="mr-logo">Movement Retail</div>
+  <div class="logo-divider"></div>
+  <div class="brand-tag">Ancient Nutrition — Confidential Analysis</div>
+  <button class="print-btn" onclick="window.print()">Export PDF</button>
+</header>
+
+<nav id="slide-nav">
+  <div class="nav-dot active" onclick="scrollToSlide(1)"><span class="nav-tip">Cover</span></div>
+  <div class="nav-dot" onclick="scrollToSlide(2)"><span class="nav-tip">Amazon Presence</span></div>
+  <div class="nav-dot" onclick="scrollToSlide(3)"><span class="nav-tip">Seller Risks</span></div>
+  <div class="nav-dot" onclick="scrollToSlide(4)"><span class="nav-tip">Revenue Leakage</span></div>
+  <div class="nav-dot" onclick="scrollToSlide(5)"><span class="nav-tip">Image Upgrade</span></div>
+  <div class="nav-dot" onclick="scrollToSlide(6)"><span class="nav-tip">Storefront Vision</span></div>
+  <div class="nav-dot" onclick="scrollToSlide(7)"><span class="nav-tip">Our Strategy</span></div>
+  <div class="nav-dot" onclick="scrollToSlide(8)"><span class="nav-tip">Roadmap</span></div>
+  <div class="nav-dot" onclick="scrollToSlide(9)"><span class="nav-tip">Next Steps</span></div>
+</nav>
+
+
+<!-- ================================================================ -->
+<!-- SLIDE 1 — COVER                                                   -->
+<!-- ================================================================ -->
+<section id="slide-1" class="slide">
+  <div class="cover-grid-bg"></div>
+  <div class="cover-content">
+    <div class="cover-eyebrow">Amazon Channel Analysis</div>
+    <h1>Ancient Nutrition</h1>
+    <p class="cover-subtitle">Amazon Channel Control &amp; Revenue Opportunity Analysis</p>
+    <div class="cover-meta">
+      <span><strong>ASIN:</strong> B079XTMMLS</span>
+      <span><strong>Prepared:</strong> February 21, 2026</span>
+      <span><strong>By:</strong> Movement Retail</span>
+    </div>
+    <div class="kpi-bar">
+      <div class="kpi-item">
+        <span class="kpi-number" id="kpi-score">4.8</span>
+        <span class="kpi-label">Listing Quality Score / 10</span>
+      </div>
+      <div class="kpi-item">
+        <span class="kpi-number" id="kpi-sellers">14</span>
+        <span class="kpi-label">Unauthorized Sellers</span>
+      </div>
+      <div class="kpi-item">
+        <span class="kpi-number" id="kpi-opportunity">$409,200</span>
+        <span class="kpi-label">Annual Opportunity</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- SLIDE 2 — CURRENT AMAZON PRESENCE                                 -->
+<!-- ================================================================ -->
+<section id="slide-2" class="slide">
+  <div class="slide-label">Current State</div>
+  <h2>Amazon Presence Overview</h2>
+  <p class="muted" style="margin-top:8px;margin-bottom:28px;">Where Ancient Nutrition stands today on Amazon.</p>
+
+  <div class="grid-2-1">
+    <div>
+      <div class="card" style="margin-bottom:20px;">
+        <h4 style="margin-bottom:14px;">Listing Snapshot</h4>
+        <table>
+          <tr><td class="td-label">Product Title</td><td class="td-value" style="font-size:13px;">Multi Collagen Protein Powder Unflavored, 10oz (20 Servings) — Hydrolyzed Peptides, Types I, II, III, V &amp; X, Keto &amp; Paleo Friendly</td></tr>
+          <tr><td class="td-label">Price</td><td class="td-value">$44.95 MSRP (Buy Box: $41.99)</td></tr>
+          <tr><td class="td-label">Rating</td><td class="td-value">4.5 / 5.0</td></tr>
+          <tr><td class="td-label">Review Count</td><td class="td-value">8,427</td></tr>
+          <tr><td class="td-label">Image Count</td><td class="td-value">7 (no infographics)</td></tr>
+          <tr><td class="td-label">A+ Content</td><td class="td-value">Present — basic modules only</td></tr>
+          <tr><td class="td-label">Brand Registry</td><td class="td-value">Enrolled</td></tr>
+          <tr><td class="td-label">Category Rank</td><td class="td-value">#18 in Sports Nutrition Protein</td></tr>
+          <tr><td class="td-label">Seller Count</td><td class="td-value red">14 sellers</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h4 style="margin-bottom:14px;">Score Breakdown</h4>
+        <table>
+          <thead><tr><th>Dimension</th><th>Score</th></tr></thead>
+          <tbody>
+            <tr><td class="td-label">Title Optimization</td><td class="td-value gold">5.5 / 10</td></tr>
+            <tr><td class="td-label">Keyword Clarity</td><td class="td-value gold">6.5 / 10</td></tr>
+            <tr><td class="td-label">Benefit Communication</td><td class="td-value gold">4.0 / 10</td></tr>
+            <tr><td class="td-label">Image Quality</td><td class="td-value gold">3.5 / 10</td></tr>
+            <tr><td class="td-label">Brand Authority</td><td class="td-value gold">4.5 / 10</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <h4 style="margin-bottom:0;">Listing Quality Score</h4>
+      <div class="score-dial-wrapper">
+        <svg width="130" height="130" viewBox="0 0 120 120" style="overflow:visible;">
+          <circle class="score-bg-circle" cx="60" cy="60" r="54"/>
+          <circle class="score-arc" id="score-arc" cx="60" cy="60" r="54"/>
+          <text class="score-dial-num" id="score-dial-num" x="60" y="55">4.8</text>
+          <text class="score-dial-sub" x="60" y="76">OUT OF 10</text>
+        </svg>
+        <p style="font-size:13px;color:var(--muted);margin-top:10px;max-width:180px;line-height:1.4;text-align:center;">This listing has significant room for optimization across all five dimensions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- SLIDE 3 — UNAUTHORIZED SELLER RISKS                               -->
+<!-- ================================================================ -->
+<section id="slide-3" class="slide">
+  <div class="slide-label">Brand Control</div>
+  <h2>Unauthorized Seller Risks</h2>
+  <p class="muted" style="margin-top:8px;margin-bottom:28px;">Every unauthorized seller is a brand liability &mdash; not just a margin problem.</p>
+
+  <div class="grid-3" style="margin-bottom:20px;">
+    <div class="card card-red">
+      <span class="risk-badge risk-high">High Risk</span>
+      <h3>Pricing Instability</h3>
+      <p style="font-size:14px;color:var(--muted);margin-top:8px;line-height:1.5;">13 of 14 sellers are unauthorized. The Buy Box is held at $41.99 — 6.6% below MSRP. Four sellers are priced below $40.00, with the lowest at $37.50, training customers to expect Ancient Nutrition at a discount.</p>
+    </div>
+    <div class="card card-red">
+      <span class="risk-badge risk-high">High Risk</span>
+      <h3>Brand Perception</h3>
+      <p style="font-size:14px;color:var(--muted);margin-top:8px;line-height:1.5;">Every negative experience from an unauthorized seller — late shipment, damaged packaging, product near expiration — generates a 1-star review attributed to Ancient Nutrition, not the reseller. Estimated 20–30% of 1-star reviews are reseller-related.</p>
+    </div>
+    <div class="card card-red">
+      <span class="risk-badge risk-medium">Medium Risk</span>
+      <h3>Channel Conflict</h3>
+      <p style="font-size:14px;color:var(--muted);margin-top:8px;line-height:1.5;">When distributor inventory is liquidated onto Amazon without brand authorization, it creates direct competition against any brand-direct channel. Without an authorized seller holding the Buy Box, MSRP enforcement is structurally impossible.</p>
+    </div>
+  </div>
+
+  <div class="alert-box">
+    <strong style="color:var(--red);">14 unauthorized sellers</strong> are currently active on this ASIN &mdash; each one operating entirely outside your brand control.
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <h4 style="margin-bottom:14px;">Specific Risk Exposure</h4>
+    <ul class="bullet-list">
+      <li>Buy Box is not held by the brand — customers are purchasing through unverified resellers with no brand experience guarantee</li>
+      <li>Grey-market sellers pricing 11–17% below MSRP are actively eroding Ancient Nutrition's premium positioning and conditioning repeat customers to search for discounts</li>
+      <li>Without MAP enforcement, any distributor can liquidate inventory onto Amazon — making channel control structurally impossible without an authorized seller holding the Buy Box</li>
+      <li>Ancient Nutrition has zero visibility into who is buying their product on Amazon — no customer data, no email capture, no brand relationship — assets their DTC competitors own completely</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- SLIDE 4 — REVENUE LEAKAGE SIMULATION                              -->
+<!-- ================================================================ -->
+<section id="slide-4" class="slide">
+  <div class="slide-label">Financial Impact</div>
+  <h2>Revenue Leakage Simulation</h2>
+  <p class="muted" style="margin-top:8px;margin-bottom:28px;">The cost of inaction &mdash; modeled across three scenarios.</p>
+
+  <div class="grid-3">
+    <div class="card scenario-card">
+      <div class="scenario-label">Conservative</div>
+      <div class="scenario-monthly">$22,300</div>
+      <div class="scenario-annual">$267,600 / year</div>
+    </div>
+    <div class="card card-gold scenario-card">
+      <div class="scenario-label">Moderate</div>
+      <div class="scenario-monthly">$34,100</div>
+      <div class="scenario-annual">$409,200 / year</div>
+      <div class="scenario-badge">Most Likely</div>
+    </div>
+    <div class="card scenario-card">
+      <div class="scenario-label">Aggressive</div>
+      <div class="scenario-monthly">$48,800</div>
+      <div class="scenario-annual">$585,600 / year</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:22px;">
+    <h4 style="margin-bottom:14px;">Model Assumptions</h4>
+    <table>
+      <thead><tr><th>Assumption</th><th>Value Used</th></tr></thead>
+      <tbody>
+        <tr><td class="td-label">Estimated Monthly Revenue</td><td class="td-value">$180,000 / month (estimated)</td></tr>
+        <tr><td class="td-label">3P Seller Margin (Range)</td><td class="td-value">15–25% of revenue to unauthorized sellers</td></tr>
+        <tr><td class="td-label">Brand Direct Margin (Range)</td><td class="td-value">35–55% if brand-controlled channel</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="footnote">All figures are estimates based on stated assumptions. Movement Retail makes no guarantee of specific financial outcomes. Analysis is for strategic planning purposes only.</p>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- SLIDE 5 — IMAGE UPGRADE PREVIEW                                   -->
+<!-- ================================================================ -->
+<section id="slide-5" class="slide">
+  <div class="slide-label">Visual Strategy</div>
+  <h2>Image Upgrade Preview</h2>
+  <p class="muted" style="margin-top:8px;margin-bottom:24px;">From commodity listing to category-defining brand presence.</p>
+
+  <div class="before-after-grid">
+    <div class="ba-col ba-before">
+      <div class="ba-header">&#9888; Current State</div>
+      <div class="ba-item"><span class="ba-icon red">&#10007;</span><span>Main image is a plain product bag on white — visually identical to private-label competitors at half the price; no premium signal to justify $44.95</span></div>
+      <div class="ba-item"><span class="ba-icon red">&#10007;</span><span>Zero infographics explaining the 5-type collagen system — the brand's single strongest differentiator is completely invisible</span></div>
+      <div class="ba-item"><span class="ba-icon red">&#10007;</span><span>No aspirational lifestyle imagery — collagen is an emotional purchase but the listing treats it as a commodity transaction</span></div>
+      <div class="ba-item"><span class="ba-icon red">&#10007;</span><span>Bullet points are feature-led spec sheets; a shopper cannot answer 'what will this do for me?' in under 5 seconds</span></div>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-header">&#10003; Upgraded State</div>
+      <div class="ba-item"><span class="ba-icon green">&#10003;</span><span>Premium dark-field hero image with sourcing elements and '5 Types. One Powder.' copy — immediately differentiates at the search grid level</span></div>
+      <div class="ba-item"><span class="ba-icon green">&#10003;</span><span>5-type collagen breakdown infographic with source icons and body-benefit callouts makes the brand's core differentiator scannable in under 3 seconds</span></div>
+      <div class="ba-item"><span class="ba-icon green">&#10003;</span><span>Aspirational lifestyle photography featuring a relatable, active customer connects the product to the life outcomes the buyer is actually purchasing</span></div>
+      <div class="ba-item"><span class="ba-icon green">&#10003;</span><span>Benefit-led bullet rewrite: leads with outcome ('Support joint comfort, skin elasticity, and gut health') before feature — answers 'what's in it for me' instantly</span></div>
+    </div>
+  </div>
+
+  <div class="highlight-box">The shift from feature-led to benefit-led visual storytelling activates three key psychological purchase drivers: Aspiration (the customer sees who they can become), Trust (transparent sourcing signals quality worth $44.95), and Risk Reduction (premium visual quality reduces perceived risk of a first purchase). Projected conversion rate improvement: 18–24%.</div>
+
+  <div class="concept-grid">
+    <div class="concept-card"><div class="concept-num">IMAGE 01</div><div class="concept-title">Premium Dark-Field Hero</div><div class="concept-desc">Product bag on deep forest green with ingredient elements softly blurred behind. '5 Types. One Powder.' in gold. Stops the scroll in a grid of white-background competitors.</div></div>
+    <div class="concept-card"><div class="concept-num">IMAGE 02</div><div class="concept-title">5-Type Collagen Breakdown</div><div class="concept-desc">Five columns, each showing collagen type, source icon, and body benefit. 'Not all collagen is the same.' Makes the biggest differentiator instantly visible.</div></div>
+    <div class="concept-card"><div class="concept-num">IMAGE 03</div><div class="concept-title">Head-to-Toe Benefits Map</div><div class="concept-desc">Human silhouette with color-coded callout lines to Hair, Skin, Nails, Joints, Gut, and Bone — each noting the collagen type. 'Head-to-toe support in every scoop.'</div></div>
+    <div class="concept-card"><div class="concept-num">IMAGE 04</div><div class="concept-title">Hydrolysis Science Panel</div><div class="concept-desc">Before/after molecular visualization: standard collagen vs. hydrolyzed peptides. Simple, no jargon. 'Hydrolyzed for faster, more complete absorption.'</div></div>
+    <div class="concept-card"><div class="concept-num">IMAGE 05</div><div class="concept-title">Serving Versatility Grid</div><div class="concept-desc">Six warm vignettes: coffee, smoothie, bone broth, oats, muffin, shaker. 'Unflavored. Goes everywhere.' Counters the top objection for unflavored powder.</div></div>
+    <div class="concept-card"><div class="concept-num">IMAGE 06</div><div class="concept-title">Source &amp; Standards Authority</div><div class="concept-desc">Four-quadrant sourcing scenes: green pastures, open ocean, farm, pastoral field. Each with collagen type and standard. 'Where your collagen comes from matters.'</div></div>
+    <div class="concept-card"><div class="concept-num">IMAGE 07</div><div class="concept-title">Lifestyle — Active &amp; Vibrant</div><div class="concept-desc">Active woman in her 40s, sunrise trail run, warm golden light. Product subtly visible. The customer should see themselves. Aspirational vitality, not clinical.</div></div>
+    <div class="concept-card"><div class="concept-num">IMAGE 08</div><div class="concept-title">Listing Upgrade Contrast</div><div class="concept-desc">Split-screen: current listing lost in white-background noise (Before) vs. upgraded dark-field premium hero (After). 'The product didn't change. The brand presence did.'</div></div>
+  </div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- SLIDE 6 — BRAND-OWNED STOREFRONT VISION                           -->
+<!-- ================================================================ -->
+<section id="slide-6" class="slide">
+  <div class="slide-label">Channel Strategy</div>
+  <h2>Brand-Owned Storefront Vision</h2>
+  <p class="muted" style="margin-top:8px;margin-bottom:28px;">Own your channel. Control your narrative. Reclaim your margin.</p>
+
+  <div class="grid-3">
+    <div class="card card-red">
+      <h4 style="color:var(--red);margin-bottom:14px;">Without Control</h4>
+      <ul class="bullet-list">
+        <li>Grey-market resellers race prices to the bottom — structurally impossible to hold MSRP without an authorized channel partner enforcing it</li>
+        <li>Customers receive zero brand experience guarantee — negative fulfillment issues become 1-star reviews attributed to Ancient Nutrition, not the reseller</li>
+        <li>No customer data from the largest retail channel — no email capture, no purchase history, no remarketing while DTC competitors own their Amazon buyers</li>
+      </ul>
+    </div>
+    <div class="card card-green">
+      <h4 style="color:var(--green);margin-bottom:14px;">Brand-Owned Vision</h4>
+      <ul class="bullet-list">
+        <li>Single authorized channel at $44.95 MSRP — Movement Retail holds the Buy Box and eliminates the race-to-bottom permanently</li>
+        <li>Brand-curated pages with premium A+ content, lifestyle video, and upgraded imagery reflecting Dr. Axe's credibility and ancestral authority</li>
+        <li>Direct customer infrastructure: brand-registered review program, post-purchase sequences, and product launch audience built from authenticated buyers</li>
+      </ul>
+    </div>
+    <div class="card card-blue">
+      <h4 style="color:var(--blue);margin-bottom:14px;">Movement Retail's Role</h4>
+      <ul class="bullet-list">
+        <li>Serve as the single authorized Amazon seller — holding the Buy Box, enforcing MSRP, and acting as the brand's exclusive channel representative</li>
+        <li>Own and continuously optimize all listing content, imagery, A+ modules, and Brand Store — no additional internal resources required from Ancient Nutrition</li>
+        <li>Execute brand protection enforcement: Cease &amp; Desist filings, Amazon IP complaints, and ongoing monitoring to keep unauthorized sellers below 2 within 90 days</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight-box">When your best product is being sold by strangers at a discount, that&rsquo;s not distribution &mdash; that&rsquo;s brand erosion. We fix that.</div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- SLIDE 7 — MOVEMENT RETAIL STRATEGY                                -->
+<!-- ================================================================ -->
+<section id="slide-7" class="slide">
+  <div class="slide-label">Partnership Model</div>
+  <h2>Our Strategy for Ancient Nutrition</h2>
+  <p class="muted" style="margin-top:8px;margin-bottom:28px;">Four pillars that define how we operate as your dedicated Amazon channel partner.</p>
+
+  <div class="grid-2" style="gap:18px;">
+    <div class="card card-gold">
+      <div class="pillar-icon">&#9889;</div>
+      <div class="pillar-title">Channel Protection</div>
+      <div class="pillar-desc">Serve as the exclusive authorized Amazon seller, eliminating unauthorized resellers and enforcing MAP pricing through legal tools and platform-based enforcement.</div>
+    </div>
+    <div class="card card-gold">
+      <div class="pillar-icon">&#128737;</div>
+      <div class="pillar-title">Listing Elevation</div>
+      <div class="pillar-desc">Upgrade the entire product page: premium imagery, benefit-led copy rewrite, A+ Premium content, and Brand Store — turning the listing into a brand destination.</div>
+    </div>
+    <div class="card card-gold">
+      <div class="pillar-icon">&#128202;</div>
+      <div class="pillar-title">Revenue Intelligence</div>
+      <div class="pillar-desc">Monthly reporting on Buy Box win rate, sales velocity, competitor pricing, unauthorized seller count, and review sentiment — full channel visibility for the first time.</div>
+    </div>
+    <div class="card card-gold">
+      <div class="pillar-icon">&#128640;</div>
+      <div class="pillar-title">Sustainable Growth</div>
+      <div class="pillar-desc">Sponsored Brand and Display campaigns targeting collagen keywords and competitor terms — growing total revenue rather than just redistributing existing volume.</div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:28px;">We act as your <strong>authorized Amazon channel partner</strong>, not just an agency. Your brand control, your margin recovery, your growth &mdash; executed by us.</div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- SLIDE 8 — IMPLEMENTATION ROADMAP                                  -->
+<!-- ================================================================ -->
+<section id="slide-8" class="slide">
+  <div class="slide-label">Execution Plan</div>
+  <h2>Implementation Roadmap</h2>
+  <p class="muted" style="margin-top:8px;">A structured 90-day path from analysis to full channel control.</p>
+
+  <div class="timeline">
+    <div class="timeline-phase">
+      <div class="timeline-dot">30</div>
+      <div class="timeline-phase-title">Channel Audit &amp; Control</div>
+      <ul class="timeline-bullets">
+        <li>Document all 14 unauthorized sellers; build enforcement case files</li>
+        <li>Establish Movement Retail as authorized reseller; apply for Buy Box eligibility at $44.95 MSRP</li>
+        <li>Begin MAP enforcement: C&amp;D notices to top 5 unauthorized sellers; Amazon IP filings</li>
+      </ul>
+    </div>
+    <div class="timeline-phase">
+      <div class="timeline-dot">60</div>
+      <div class="timeline-phase-title">Listing Transformation</div>
+      <ul class="timeline-bullets">
+        <li>Deliver 8 upgraded images per Pomelli brief; install on live listing</li>
+        <li>Complete benefit-led title and bullet rewrite for search optimization</li>
+        <li>Launch A+ Premium content: 5-type breakdown, sourcing story, brand identity carousel</li>
+      </ul>
+    </div>
+    <div class="timeline-phase">
+      <div class="timeline-dot">90</div>
+      <div class="timeline-phase-title">Revenue Acceleration</div>
+      <ul class="timeline-bullets">
+        <li>Launch Sponsored Brand campaigns targeting 'multi collagen' and 12 competitor terms</li>
+        <li>Implement review acquisition strategy for verified purchasers — 5-star velocity campaign</li>
+        <li>Deliver Month 1 report: Buy Box win rate, revenue per unit, seller count, conversion vs. baseline</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-green" style="margin-top:28px;">
+    <h4 style="color:var(--green);margin-bottom:10px;">Expected Outcomes</h4>
+    <p style="font-size:14px;line-height:1.6;">Within 90 days, Ancient Nutrition should hold the Buy Box &gt;95% of the time, see unauthorized sellers reduced from 14 to fewer than 3, and experience a 15–25% increase in revenue per unit from MSRP enforcement. Listing conversion projected to improve 18–24%, translating to $32,400–$43,200 in additional monthly gross revenue.</p>
+  </div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- SLIDE 9 — CALL TO ACTION                                          -->
+<!-- ================================================================ -->
+<section id="slide-9" class="slide">
+  <div class="slide-label">Next Steps</div>
+  <h2>Ready to Reclaim Your Amazon Channel?</h2>
+  <p class="muted" style="margin-top:12px;font-size:16px;max-width:520px;line-height:1.6;">The opportunity is clear. The strategy is ready. The only question is when to start.</p>
+
+  <div class="cta-next-steps">
+    <div class="cta-card">
+      <div class="cta-step-num">STEP 01</div>
+      <div class="cta-step-title">Schedule a Strategy Call</div>
+      <div class="cta-step-desc">30-minute call with Dillon Hippensteel to review this analysis and align on priorities.</div>
+    </div>
+    <div class="cta-card">
+      <div class="cta-step-num">STEP 02</div>
+      <div class="cta-step-title">Review With Your Team</div>
+      <div class="cta-step-desc">Share this proposal internally. We're happy to present to your leadership if helpful.</div>
+    </div>
+    <div class="cta-card">
+      <div class="cta-step-num">STEP 03</div>
+      <div class="cta-step-title">Request a Full Channel Audit</div>
+      <div class="cta-step-desc">We can expand this analysis across your full Amazon catalog at no cost.</div>
+    </div>
+  </div>
+
+  <div class="contact-block">
+    <div class="contact-name">Dillon Hippensteel</div>
+    <div class="contact-details">
+      <span>dillon@movementretail.com</span>
+      <span>(555) 000-0000</span>
+    </div>
+  </div>
+
+  <div class="cta-footer">
+    <div class="footer-logo">Movement Retail</div>
+    <div class="footer-tagline">Amazon Channel Control &amp; Revenue Optimization Partners for Manufacturers</div>
+    <div class="confidentiality">This proposal is confidential and prepared exclusively for Ancient Nutrition. Not for distribution.</div>
+  </div>
+</section>
+
+
+<script>
+  // ── Entrance animations via IntersectionObserver ──
+  var slides = document.querySelectorAll('.slide');
+  var navDots = document.querySelectorAll('.nav-dot');
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  slides.forEach(function(slide) {
+    if (slide.id !== 'slide-1') observer.observe(slide);
+  });
+
+  // ── Progress bar + active nav dot ──
+  function updateNav() {
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+
+    var activeIdx = 0;
+    slides.forEach(function(slide, i) {
+      if (slide.getBoundingClientRect().top <= window.innerHeight * 0.5) activeIdx = i;
+    });
+    navDots.forEach(function(dot, i) {
+      dot.classList.toggle('active', i === activeIdx);
+    });
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+
+  // ── Scroll to slide ──
+  function scrollToSlide(n) {
+    var el = document.getElementById('slide-' + n);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── Score dial animation ──
+  var dialObserver = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+      var scoreText = document.getElementById('score-dial-num').textContent.trim();
+      var score = parseFloat(scoreText) || 0;
+      var circumference = 339.3;
+      var offset = circumference * (1 - score / 10);
+      setTimeout(function() {
+        document.getElementById('score-arc').style.strokeDashoffset = offset;
+      }, 250);
+      dialObserver.disconnect();
+    }
+  }, { threshold: 0.3 });
+  dialObserver.observe(document.getElementById('slide-2'));
+</script>
+
+</body>
+</html>
